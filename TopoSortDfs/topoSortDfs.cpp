@@ -1,34 +1,36 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+void findTopoSort(int node, vector<int> &vis, stack<int>&st, vector<int> adj[])
+{
+    vis[node] = 1;
+    for(auto it: adj[node])
+    {
+        if(!vis[it])
+        {
+            findTopoSort(it, vis, st, adj);
+        }
+    }
+    st.push(node);
+}
+
 vector<int> topoSortDfs(int v, vector<int> adj[])
 {
-    vector<int> topo;
-    vector<int> vis(v+1, 0);
     stack<int> st;
-    for(int i=1; i<=v; i++)
+    vector<int> vis(v, 0);
+    for(int i=0;i<v;i++)
     {
         if(!vis[i])
         {
-            st.push(i);
-            vis[i] = 1;
-            while(!st.empty())
-            {
-                int node = st.top();
-                st.pop();
-                topo.push_back(node);
-                for(auto it: adj[node])
-                {
-                    if(!vis[it])
-                    {
-                        st.push(it);
-                        vis[it] = 1;
-                    }
-                }
-            }
+            findTopoSort(i, vis, st, adj);
         }
     }
-    reverse(topo.begin(), topo.end());
+    vector<int> topo;
+    while(!st.empty())
+    {
+        topo.push_back(st.top());
+        st.pop();
+    }
     return topo;
 
 }
@@ -40,7 +42,7 @@ int main()
     cin>>v;
     cout<<"Enter number of edges";
     cin>>e;
-    vector<int> adj[v+1];
+    vector<int> adj[v];
     cout<<"Enter the edges";
     for(int i=0; i<e; i++)
     {
@@ -49,4 +51,11 @@ int main()
         adj[u].push_back(v);
     }
     vector<int> topo = topoSortDfs(v, adj);
+    cout<<"Topological Sort is:"<<endl;
+    for(auto it: topo)
+    {
+        cout<<it<<" ";
+    }
+
+
 }
